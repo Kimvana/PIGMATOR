@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PIGMATOR</title>
+
+    <link rel="stylesheet"
+          href="https://pyscript.net/releases/2026.6.1/core.css">
+
+    <script type="module"
+            src="https://pyscript.net/releases/2026.6.1/core.js">
+    </script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 65%;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #output {
+            margin-top: 30px;
+            font-size: 2em;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Welome to PIGMATOR</h1>
+
+    <p>Enter some text:</p>
+
+    <input id="user-input" type="text" value="Hello Python">
+
+    <button id="run-button">Run Python</button>
+
+    <div id="output">Waiting for input...</div>
+
+    <script type="py"
+            src="./python/main.py"
+            config="./conf.json">
+    </script>
+
+</body>
+</html>
