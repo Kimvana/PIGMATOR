@@ -5,6 +5,8 @@ Colour interpolation functions for PIGMATOR.
 Supported interpolation methods:
 - sRGB
 - linRGB
+- HSV
+- HSL
 - OKLab
 
 All interpolation calculations are independent of the browser interface.
@@ -54,7 +56,7 @@ def interpolate_palette(
         List of hexadecimal waypoint colours.
 
     method : str
-        Interpolation method: 'srgb' or 'oklab'.
+        Interpolation method: 'srgb', 'linrgb', 'hsv', 'hsl' or 'oklab'.
 
     samples_per_segment : int
         Number of interpolation intervals per segment.

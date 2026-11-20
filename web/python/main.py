@@ -4,6 +4,8 @@ from pyscript.ffi import is_none
 
 from interpolation import interpolate_palette
 import vision
+import conversions as conv
+
 
 # ==========================================
 # Palette data
@@ -37,17 +39,7 @@ def get_contrasting_text_colour(colour):
     """Return black or white, depending on colour luminance."""
 
     # Convert sRGB values to linear RGB.
-    rgb = [
-        int(colour[i:i + 2], 16) / 255
-        for i in (1, 3, 5)
-    ]
-
-    linear_rgb = [
-        channel / 12.92
-        if channel <= 0.04045
-        else ((channel + 0.055) / 1.055) ** 2.4
-        for channel in rgb
-    ]
+    linear_rgb = conv.srgb_to_linear(conv.hex_to_srgb(colour))
 
     # Calculate relative luminance.
     luminance = (
@@ -510,7 +502,7 @@ def render_palette_preview_base(model, samples):
 
 
 def render_palette_preview():
-    """Render normal-vision and grayscale palette representations."""
+    """Render all palette representations."""
 
     # Generate the interpolated palette only once.
     samples = interpolate_palette(

@@ -520,7 +520,6 @@ body {
 #palette-representations {
     display: flex;
     flex-direction: column;
-    gap: 0px;
 }
 
 .palette-representation {
@@ -531,14 +530,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0px;
     margin-bottom: 12px;
 }
 
 .palette-representation-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-bottom: 4px;
 }
 
@@ -605,10 +600,6 @@ body {
 
 .palette-waypoint-swatches {
     position: relative;
-
-    display: flex;
-    justify-content: space-between;
-
     margin-top: 10px;
 }
 
