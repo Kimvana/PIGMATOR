@@ -598,6 +598,38 @@ def render_palette_preview():
         "deuteranopia-waypoint-swatches"
     )
 
+    # Tritanopia representation.
+    tritanopia_samples = [
+        (position, vision.simulate_tritanopia(colour))
+        for position, colour in samples
+    ]
+
+    tritanopia_waypoints = []
+
+    for index in range(len(waypoints)):
+
+        position = (
+            index / (len(waypoints) - 1) * 100
+            if len(waypoints) > 1
+            else 0
+        )
+
+        closest_sample = min(
+            tritanopia_samples,
+            key=lambda sample: abs(sample[0] - position)
+        )
+
+        tritanopia_waypoints.append(closest_sample[1])
+
+    render_palette_representation(
+        tritanopia_samples,
+        tritanopia_waypoints,
+        "tritanopia-gradient",
+        "tritanopia-waypoint-markers",
+        "tritanopia-waypoint-swatches"
+    )
+
+
 # ==========================================
 # Interpolation method selection
 # ==========================================
