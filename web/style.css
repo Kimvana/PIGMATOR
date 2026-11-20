@@ -1,0 +1,409 @@
+/* ==========================================
+   PIGMATOR - Dashboard styling
+   ========================================== */
+
+
+/* ------------------------------------------
+   Colour themes
+   ------------------------------------------ */
+
+:root {
+    /* System preference by default */
+    color-scheme: light dark;
+
+    --background: light-dark(#f1f3f5, #171b22);
+    --panel: light-dark(#ffffff, #222a35);
+    --input: light-dark(#f4f6f8, #303c4b);
+
+    --text: light-dark(#263238, #e6edf3);
+    --muted: light-dark(#718096, #a9bacb);
+
+    --border: light-dark(#d5dce3, #394452);
+    --accent: light-dark(#3478b8, #69a9e7);
+}
+
+
+/* Explicit light mode */
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+
+/* Explicit dark mode */
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+/* ------------------------------------------
+   General page styling
+   ------------------------------------------ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: var(--background);
+    color: var(--text);
+
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+
+
+/* ------------------------------------------
+   Page header
+   ------------------------------------------ */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.page-header p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+
+
+/* ------------------------------------------
+   Theme selector
+   ------------------------------------------ */
+
+
+.theme-selector {
+    position: relative;
+}
+
+
+/* Main dropdown button */
+
+#theme-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 44px;
+    height: 40px;
+
+    background-color: var(--panel);
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    cursor: pointer;
+}
+
+#theme-menu-button:hover {
+    background-color: var(--input);
+}
+
+
+/* .theme-selector button.active {
+    background-color: var(--accent);
+    color: white;
+} */
+
+
+/* Theme icons */
+
+.theme-icon {
+    width: 19px;
+    height: 19px;
+
+    fill: none;
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.theme-icon[hidden] {
+    display: none;
+}
+
+.theme-icon:not([hidden]) {
+    display: block;
+}
+
+.dropdown-arrow {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+
+/* Dropdown menu */
+
+.theme-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+
+    min-width: 145px;
+
+    padding: 5px;
+
+    background-color: var(--panel);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    z-index: 100;
+}
+
+.theme-menu[hidden] {
+    display: none;
+}
+
+
+/* Dropdown options */
+
+.theme-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 9px 11px;
+
+    background: transparent;
+    color: var(--text);
+
+    border: none;
+    border-radius: 5px;
+
+    text-align: left;
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.theme-menu button:hover {
+    background-color: var(--input);
+}
+
+.theme-menu button.active {
+    background-color: var(--input);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.theme-menu .theme-icon {
+    flex-shrink: 0;
+}
+
+
+/* ------------------------------------------
+   Main dashboard grid
+   ------------------------------------------ */
+
+.dashboard {
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 1fr)
+        minmax(400px, 1.6fr)
+        minmax(350px, 1.4fr);
+
+    gap: 16px;
+
+    align-items: stretch;
+}
+
+
+/* ------------------------------------------
+   Dashboard panels
+   ------------------------------------------ */
+
+.panel {
+    background-color: var(--panel);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 20px;
+
+    min-height: 500px;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+
+/* =================================
+   Colour input controls
+   ================================= */
+
+.colour-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.colour-controls label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* Native colour picker */
+
+#colour-picker {
+    width: 65px;
+    height: 42px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--input);
+    cursor: pointer;
+}
+
+
+/* Hexadecimal input */
+
+#hex-input {
+    width: 110px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 15px;
+    background-color: var(--input);
+    color: var(--text);
+}
+
+
+/* Input focus */
+
+#hex-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(52, 120, 184, 0.15);
+}
+
+#hex-input.invalid {
+    border-color: #d93025;
+    background-color: var(--input);
+    color: var(--text);
+}
+
+#hex-input.invalid:focus {
+    box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.15);
+}
+
+
+/* =================================
+   Colour preview
+   ================================= */
+
+#colour-preview {
+    width: 100%;
+    max-width: 600px;
+    height: 100px;
+    background-color: #3478b8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+
+/* ------------------------------------------
+   Empty panel placeholders
+   ------------------------------------------ */
+
+.placeholder {
+    min-height: 400px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.placeholder p {
+    margin: 5px;
+}
+
+
+
+/* =================================
+   Responsive layout
+   ================================= */
+
+@media (max-width: 1100px) {
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .waypoint-panel {
+        grid-column: 1 / -1;
+        min-height: auto;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .waypoint-panel {
+        grid-column: auto;
+    }
+
+    .panel {
+        min-height: 300px;
+        padding: 15px;
+    }
+
+    .placeholder {
+        min-height: 200px;
+    }
+
+}

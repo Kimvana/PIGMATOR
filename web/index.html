@@ -8,13 +8,15 @@
 
     <title>PIGMATOR</title>
 
+    <link rel="stylesheet" href="./style.css">
+
     <link rel="stylesheet"
           href="https://pyscript.net/releases/2026.6.1/core.css">
 
     <script type="module"
             src="https://pyscript.net/releases/2026.6.1/core.js">
     </script>
-
+<!-- 
     <style>
         body {
             font-family: sans-serif;
@@ -38,20 +40,201 @@
             font-size: 2em;
             color: green;
         }
-    </style>
+    </style> -->
 </head>
 
+<script src="./js/theme.js" defer></script>
+
 <body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
 
-    <h1>Welome to PIGMATOR</h1>
+        <symbol id="icon-light" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2 M12 20v2 M4.93 4.93l1.42 1.42
+                    M17.65 17.65l1.42 1.42 M2 12h2 M20 12h2
+                    M4.93 19.07l1.42-1.42
+                    M17.65 6.35l1.42-1.42"/>
+        </symbol>
 
-    <p>Enter some text:</p>
+        <symbol id="icon-dark" viewBox="0 0 24 24">
+            <path d="M20.5 15.5A9 9 0 0 1 8.5 3.5
+                    A9 9 0 1 0 20.5 15.5Z"/>
+        </symbol>
 
-    <input id="user-input" type="text" value="Hello Python">
+        <symbol id="icon-system" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="13" rx="2"/>
+            <path d="M8 21h8 M12 17v4"/>
+        </symbol>
 
-    <button id="run-button">Run Python</button>
+    </svg>
 
-    <div id="output">Waiting for input...</div>
+    <header class="page-header">
+        <div class="header-title">
+            <h1>PIGMATOR</h1>
+            <p>Interactive colour palette analysis</p>
+        </div>
+
+        <div class="theme-selector">
+
+            <button
+                id="theme-menu-button"
+                type="button"
+                aria-label="Colour theme"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="theme-menu"
+            >
+                <!-- Sun icon -->
+                <svg class="theme-icon icon-light" hidden>
+                    <use href="#icon-light"/>
+                </svg>
+
+                <svg class="theme-icon icon-dark" hidden>
+                    <use href="#icon-dark"/>
+                </svg>
+
+                <svg class="theme-icon icon-system" hidden>
+                    <use href="#icon-system"/>
+                </svg>
+
+                <span class="dropdown-arrow">▾</span>
+            </button>
+
+            <div id="theme-menu" class="theme-menu" hidden>
+
+                <button type="button" data-theme="light">
+                    <svg class="theme-icon">
+                        <use href="#icon-light"/>
+                    </svg>
+                    Light
+                </button>
+
+                <button type="button" data-theme="dark">
+                    <svg class="theme-icon">
+                        <use href="#icon-dark"/>
+                    </svg>
+                    Dark
+                </button>
+
+                <button type="button" data-theme="system">
+                    <svg class="theme-icon">
+                        <use href="#icon-system"/>
+                    </svg>
+                    System
+                </button>
+
+            </div>
+
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <!-- LEFT: Colour waypoints -->
+        <section class="panel waypoint-panel">
+
+            <h2>Colour waypoints</h2>
+
+            <div id="waypoint-list">
+
+                <div class="waypoint-item" data-index="0">
+
+                    <div class="waypoint-header">
+
+                        <span class="waypoint-number">
+                            1
+                        </span>
+
+                        <span class="waypoint-title">
+                            Waypoint
+                        </span>
+
+                        <button
+                            type="button"
+                            class="delete-waypoint"
+                            disabled
+                            title="At least one waypoint is required"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                    <div class="waypoint-controls">
+
+                        <input
+                            type="color"
+                            id="colour-picker"
+                            value="#3478b8"
+                            aria-label="Waypoint colour"
+                        >
+
+                        <input
+                            type="text"
+                            id="hex-input"
+                            value="#3478b8"
+                            maxlength="7"
+                            spellcheck="false"
+                            aria-label="Waypoint hexadecimal colour"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MIDDLE: Colour space visualisation -->
+        <section class="panel graph-panel">
+
+            <h2>Colour space</h2>
+
+            <div class="placeholder">
+                <p>Colour space visualisation</p>
+                <p>Coming later</p>
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT: Palette preview -->
+        <section class="panel palette-panel">
+
+            <h2>Palette preview</h2>
+
+            <div class="placeholder">
+                <p>Palette visualisation</p>
+                <p>Coming later</p>
+            </div>
+
+        </section>
+
+    </main>
+<!-- 
+    <div class="colour-controls">
+
+        <label for="colour-picker">Choose a colour:</label>
+
+        <input
+            type="color"
+            id="colour-picker"
+            value="#3478b8"
+        >
+
+        <label for="hex-input">Hexadecimal:</label>
+
+        <input
+            type="text"
+            id="hex-input"
+            value="#3478b8"
+        >
+
+    </div>
+
+    <div id="colour-preview"></div> -->
 
     <script type="py"
             src="./python/main.py"
