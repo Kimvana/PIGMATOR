@@ -175,6 +175,8 @@ def render_waypoints():
     if len(waypoints) == 1:
         delete_buttons[0].disabled = True
 
+    render_palette_preview()
+
 
 # ==========================================
 # Add waypoints
@@ -261,6 +263,7 @@ def waypoint_input_changed(event):
         hex_input.classList.remove("invalid")
 
         update_waypoint_swatch(waypoint_item, colour)
+        render_palette_preview()
 
     elif target.classList.contains("waypoint-hex-input"):
 
@@ -279,6 +282,7 @@ def waypoint_input_changed(event):
             target.classList.remove("invalid")
 
             update_waypoint_swatch(waypoint_item, colour)
+            render_palette_preview()
 
         else:
             target.classList.add("invalid")
@@ -413,6 +417,76 @@ def waypoint_drag_end(event):
         item.classList.remove("drag-over")
         item.classList.remove("drag-over-above")
         item.classList.remove("drag-over-below")
+
+
+
+
+# ==========================================
+# Palette preview
+# ==========================================
+
+def render_palette_preview():
+    """Render the palette gradient and waypoint markers."""
+
+    gradient = document.querySelector("#palette-gradient")
+    markers = document.querySelector("#palette-waypoint-markers")
+    swatches = document.querySelector("#palette-waypoint-swatches")
+
+    if len(waypoints) == 1:
+
+        gradient.style.background = waypoints[0]
+
+    else:
+
+        gradient_stops = []
+
+        for index, colour in enumerate(waypoints):
+
+            position = index / (len(waypoints) - 1) * 100
+
+            gradient_stops.append(
+                f"{colour} {position}%"
+            )
+
+        gradient.style.background = (
+            "linear-gradient(to right, "
+            + ", ".join(gradient_stops)
+            + ")"
+        )
+
+    marker_html = ""
+    swatch_html = ""
+
+    for index, colour in enumerate(waypoints):
+
+        position = (
+            index / (len(waypoints) - 1) * 100
+            if len(waypoints) > 1
+            else 0
+        )
+
+        marker_html += f"""
+            <div
+                class="palette-waypoint-marker"
+                style="left: {position}%"
+            ></div>
+        """
+
+        swatch_html += f"""
+            <div
+                class="palette-waypoint-swatch"
+                style="
+                    left: {position}%;
+                    background-color: {colour};
+                "
+                title="Waypoint {index + 1}: {colour}"
+            ></div>
+        """
+
+    markers.innerHTML = marker_html
+    swatches.innerHTML = swatch_html
+
+
 
 # ==========================================
 # Initialisation

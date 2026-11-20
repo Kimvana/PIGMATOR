@@ -513,14 +513,108 @@ body {
    Colour preview
    ================================= */
 
-#colour-preview {
+/* ==========================================
+   Palette representations
+   ========================================== */
+
+#palette-representations {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.palette-representation {
+    min-width: 0;
+}
+
+.palette-representation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.palette-representation-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   Palette gradient and waypoint positions
+   ========================================== */
+
+.palette-bar-container {
+    position: relative;
+
     width: 100%;
-    max-width: 600px;
-    height: 100px;
-    background-color: #3478b8;
+    padding-bottom: 42px;
+}
+
+.palette-gradient {
+    width: 100%;
+    height: 55px;
+
     border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-top: 15px;
+    border-radius: 7px;
+
+    background-color: var(--input);
+}
+
+
+/* ==========================================
+   Waypoint markers
+   ========================================== */
+
+.palette-waypoint-markers {
+    position: absolute;
+
+    top: 55px;
+    left: 0;
+    right: 0;
+
+    height: 13px;
+
+    pointer-events: none;
+}
+
+.palette-waypoint-marker {
+    position: absolute;
+
+    width: 2px;
+    height: 13px;
+
+    background-color: var(--text);
+
+    transform: translateX(-1px);
+}
+
+
+/* ==========================================
+   Waypoint swatches
+   ========================================== */
+
+.palette-waypoint-swatches {
+    position: relative;
+
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 13px;
+}
+
+.palette-waypoint-swatch {
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    border: 1px solid var(--border);
+    border-radius: 4px;
+
+    transform: translateX(-50%);
 }
 
 
@@ -591,6 +685,30 @@ body {
     bottom: -6px;
 }
 
+
+/* ==========================================
+   Interpolation method selector
+   ========================================== */
+
+#interpolation-method {
+    padding: 7px 28px 7px 10px;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    background-color: var(--input);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+#interpolation-method:focus {
+    outline: none;
+    border-color: var(--accent);
+}
 
 /* ------------------------------------------
    Empty panel placeholders
