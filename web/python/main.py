@@ -3,7 +3,7 @@ from pyscript import when, document
 from pyscript.ffi import is_none
 
 from interpolation import interpolate_palette
-from vision import to_grayscale, simulate_protanopia
+import vision
 
 # ==========================================
 # Palette data
@@ -506,7 +506,7 @@ def render_palette_preview():
 
     # Grayscale representation.
     grayscale_samples = [
-        (position, to_grayscale(colour))
+        (position, vision.to_grayscale(colour))
         for position, colour in samples
     ]
 
@@ -539,7 +539,7 @@ def render_palette_preview():
 
     # Protanopia representation.
     protanopia_samples = [
-        (position, simulate_protanopia(colour))
+        (position, vision.simulate_protanopia(colour))
         for position, colour in samples
     ]
 
@@ -568,6 +568,35 @@ def render_palette_preview():
         "protanopia-waypoint-swatches"
     )
 
+    deuteranopia_samples = [
+        (position, vision.simulate_deuteranopia(colour))
+        for position, colour in samples
+    ]
+
+    deuteranopia_waypoints = []
+
+    for index in range(len(waypoints)):
+
+        position = (
+            index / (len(waypoints) - 1) * 100
+            if len(waypoints) > 1
+            else 0
+        )
+
+        closest_sample = min(
+            deuteranopia_samples,
+            key=lambda sample: abs(sample[0] - position)
+        )
+
+        deuteranopia_waypoints.append(closest_sample[1])
+
+    render_palette_representation(
+        deuteranopia_samples,
+        deuteranopia_waypoints,
+        "deuteranopia-gradient",
+        "deuteranopia-waypoint-markers",
+        "deuteranopia-waypoint-swatches"
+    )
 
 # ==========================================
 # Interpolation method selection
@@ -589,18 +618,3 @@ def interpolation_method_changed(event):
 # ==========================================
 
 render_waypoints()
-test_colours = [
-    "#000000",
-    "#FFFFFF",
-    "#808080",
-    "#FF0000",
-    "#00FF00",
-    "#0000FF",
-    "#E74C3C"
-]
-
-print("Protanopia tests:")
-
-for colour in test_colours:
-    result = simulate_protanopia(colour)
-    print(colour, "->", result)

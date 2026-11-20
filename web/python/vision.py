@@ -65,3 +65,19 @@ def simulate_protanopia(colour):
     ]
 
     return _apply_vision_matrix(colour, protanopia_matrix)
+
+
+def simulate_deuteranopia(colour):
+    """
+    Simulate complete deuteranopia using Machado et al. (2009).
+
+    Severity: 1.0 (complete dichromacy).
+    """
+
+    deuteranopia_matrix = [
+        [0.367322, 0.860646, -0.227968],
+        [0.280085, 0.672501, 0.047413],
+        [-0.011820, 0.042940, 0.968881]
+    ]
+
+    return _apply_vision_matrix(colour, deuteranopia_matrix)
