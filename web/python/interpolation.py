@@ -204,6 +204,20 @@ def interpolate_values(start, end, t):
     )
 
 
+def interpolate_hue(h1, h2, t):
+    """
+    Interpolate between two hue angles using the shortest path.
+
+    Hue is expressed in the interval [0, 1).
+    """
+
+    # Calculate the shortest signed angular difference.
+    difference = (h2 - h1 + 0.5) % 1.0 - 0.5
+
+    # Interpolate and wrap the result into [0, 1).
+    return (h1 + t * difference) % 1.0
+
+
 def interpolate_palette(
     waypoints,
     method="srgb",
@@ -294,7 +308,17 @@ def interpolate_palette(
             t = sample / samples_per_segment
 
             # Interpolate in the selected colour space.
-            interpolated = interpolate_values(start, end, t)
+            if method in ("hsv", "hsl"):
+                hue = interpolate_hue(start[0], end[0], t)
+                other_channels = interpolate_values(
+                    start[1:],
+                    end[1:],
+                    t
+                )
+                interpolated = (hue, *other_channels)
+
+            else:
+                interpolated = interpolate_values(start, end, t)
 
             # Convert back to encoded sRGB.
             if method == "srgb":
