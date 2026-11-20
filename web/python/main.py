@@ -19,9 +19,9 @@
 from pyscript import when, document
 
 
-def update_colour(colour):
-    """Update the colour preview."""
-    document.querySelector("#colour-preview").style.backgroundColor = colour
+waypoints = [
+    "#3478b8"
+]
 
 
 def set_hex_validity(is_valid):
@@ -34,29 +34,40 @@ def set_hex_validity(is_valid):
         hex_input.classList.add("invalid")
 
 
+def is_valid_hex(colour):
+    """Check whether a colour is a valid six-digit hex value."""
+
+    if len(colour) != 7 or not colour.startswith("#"):
+        return False
+
+    try:
+        int(colour[1:], 16)
+        return True
+    except ValueError:
+        return False
+
+
 @when("input", "#colour-picker")
 def picker_changed(event):
-    colour = event.target.value
+    colour = event.target.value.lower()
+
+    waypoints[0] = colour
 
     document.querySelector("#hex-input").value = colour
 
     set_hex_validity(True)
-    update_colour(colour)
 
 
 @when("change", "#hex-input")
 def hex_changed(event):
     colour = event.target.value.strip()
 
-    if len(colour) == 7 and colour.startswith("#"):
-        try:
-            int(colour[1:], 16)
-            document.querySelector("#colour-picker").value = colour
-            set_hex_validity(True)
-            update_colour(colour)
+    if is_valid_hex(colour):
+        waypoints[0] = colour
 
-        except ValueError:
-            set_hex_validity(False)
+        document.querySelector("#colour-picker").value = colour
+
+        set_hex_validity(True)
 
     else:
         set_hex_validity(False)
