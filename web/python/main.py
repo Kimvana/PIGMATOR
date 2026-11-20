@@ -2,6 +2,8 @@
 from pyscript import when, document
 from pyscript.ffi import is_none
 
+from interpolation import interpolate_palette
+
 
 # ==========================================
 # Palette data
@@ -10,6 +12,8 @@ from pyscript.ffi import is_none
 waypoints = [
     "#3478b8"
 ]
+
+interpolation_method = "srgb"
 
 
 # ==========================================
@@ -419,41 +423,36 @@ def waypoint_drag_end(event):
         item.classList.remove("drag-over-below")
 
 
-
-
 # ==========================================
 # Palette preview
 # ==========================================
 
 def render_palette_preview():
-    """Render the palette gradient and waypoint markers."""
+    """Render the interpolated palette and waypoint markers."""
 
     gradient = document.querySelector("#palette-gradient")
     markers = document.querySelector("#palette-waypoint-markers")
     swatches = document.querySelector("#palette-waypoint-swatches")
 
-    if len(waypoints) == 1:
+    # Generate the interpolated palette.
+    samples = interpolate_palette(
+        waypoints,
+        method=interpolation_method
+    )
 
-        gradient.style.background = waypoints[0]
+    # Construct CSS gradient stops.
+    gradient_stops = [
+        f"{colour} {position:.4f}%"
+        for position, colour in samples
+    ]
 
-    else:
+    gradient.style.background = (
+        "linear-gradient(to right, "
+        + ", ".join(gradient_stops)
+        + ")"
+    )
 
-        gradient_stops = []
-
-        for index, colour in enumerate(waypoints):
-
-            position = index / (len(waypoints) - 1) * 100
-
-            gradient_stops.append(
-                f"{colour} {position}%"
-            )
-
-        gradient.style.background = (
-            "linear-gradient(to right, "
-            + ", ".join(gradient_stops)
-            + ")"
-        )
-
+    # Construct waypoint markers and swatches.
     marker_html = ""
     swatch_html = ""
 
@@ -486,6 +485,20 @@ def render_palette_preview():
     markers.innerHTML = marker_html
     swatches.innerHTML = swatch_html
 
+
+# ==========================================
+# Interpolation method selection
+# ==========================================
+
+@when("change", "#interpolation-method")
+def interpolation_method_changed(event):
+    """Handle changes to the selected interpolation method."""
+
+    global interpolation_method
+
+    interpolation_method = event.target.value
+
+    render_palette_preview()
 
 
 # ==========================================
