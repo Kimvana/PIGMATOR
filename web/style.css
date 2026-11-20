@@ -525,6 +525,83 @@ body {
 }
 
 
+/* ==========================================
+   Drag and drop
+   ========================================== */
+
+.waypoint-item {
+    cursor: grab;
+    transition: opacity 0.15s ease;
+}
+
+.waypoint-item:active {
+    cursor: grabbing;
+}
+
+.drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 16px;
+
+    flex-shrink: 0;
+
+    color: var(--muted);
+
+    font-size: 19px;
+    cursor: grab;
+
+    user-select: none;
+}
+
+.drag-handle:hover {
+    color: var(--text);
+}
+
+
+/* ==========================================
+   Drag and drop visual feedback
+   ========================================== */
+
+/* Waypoint currently being dragged */
+.waypoint-item.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+}
+
+/* Waypoint currently targeted */
+.waypoint-item.drag-over {
+    position: relative;
+}
+
+/* Horizontal insertion indicator */
+.waypoint-item.drag-over::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    height: 3px;
+
+    background-color: var(--accent);
+    border-radius: 3px;
+
+    pointer-events: none;
+}
+
+/* Indicator above the target */
+.waypoint-item.drag-over-above::before {
+    top: -6px;
+}
+
+/* Indicator below the target */
+.waypoint-item.drag-over-below::before {
+    bottom: -6px;
+}
+
+
 /* ------------------------------------------
    Empty panel placeholders
    ------------------------------------------ */

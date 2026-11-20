@@ -79,7 +79,12 @@ def render_waypoints():
         text_colour = get_contrasting_text_colour(colour)
 
         html += f"""
-            <div class="waypoint-item" data-index="{index}">
+            <div class="waypoint-item" data-index="{index}" draggable="true">
+
+                <span class="drag-handle"
+                    title="Drag to reorder">
+                    ⠿
+                </span>
 
                 <span class="waypoint-number"
                       style="background-color: {colour};
@@ -207,15 +212,7 @@ def add_waypoint_bottom(event):
 def waypoint_button_clicked(event):
     """Handle insertion and deletion buttons."""
 
-    # print("event", event)
-    # print(dir(event))
-    # print("event.target", event.target)
-    # print(dir(event.target))
-    # print("event.target.className", event.target.className)
-
     button = event.target.closest("[data-action]")
-
-    # print("button", button, type(button))
 
     if is_none(button):
         return
@@ -231,21 +228,6 @@ def waypoint_button_clicked(event):
         if len(waypoints) > 1:
             waypoints.pop(index)
             render_waypoints()
-
-# @when("waypoint-action", "document")
-# def waypoint_action(event):
-#     """Handle waypoint insertion and deletion."""
-
-#     action = event.detail.action
-#     index = int(event.detail.index)
-
-#     if action == "insert":
-#         add_waypoint(index)
-
-#     elif action == "delete":
-#         if len(waypoints) > 1:
-#             waypoints.pop(index)
-#             render_waypoints()
 
 
 # ==========================================
@@ -312,6 +294,136 @@ def update_waypoint_swatch(waypoint_item, colour):
     swatch.style.backgroundColor = colour
     swatch.style.color = text_colour
 
+
+# ==========================================
+# Drag and drop
+# ==========================================
+
+dragged_index = None
+
+
+@when("dragstart", "#waypoint-list")
+def waypoint_drag_start(event):
+    """Record which waypoint is being dragged."""
+
+    global dragged_index
+
+    item = event.target.closest(".waypoint-item")
+
+    if is_none(item):
+        return
+
+    dragged_index = int(item.dataset.index)
+
+    item.classList.add("dragging")
+
+    event.dataTransfer.effectAllowed = "move"
+    event.dataTransfer.setData("text/plain", str(dragged_index))
+
+
+@when("dragover", "#waypoint-list")
+def waypoint_drag_over(event):
+    """Allow dropping inside the waypoint list."""
+
+    event.preventDefault()
+
+    target = event.target.closest(".waypoint-item")
+
+    if is_none(target):
+        return
+
+    # Remove previous indicators.
+    items = document.querySelectorAll(".waypoint-item")
+
+    for item in items:
+        item.classList.remove("drag-over")
+        item.classList.remove("drag-over-above")
+        item.classList.remove("drag-over-below")
+
+    target_index = int(target.dataset.index)
+
+    # Determine whether the pointer is in the upper or lower half.
+    rect = target.getBoundingClientRect()
+
+    pointer_y = event.clientY
+    midpoint = rect.top + rect.height / 2
+
+    target.classList.add("drag-over")
+
+    if pointer_y < midpoint:
+        target.classList.add("drag-over-above")
+    else:
+        target.classList.add("drag-over-below")
+
+    event.dataTransfer.dropEffect = "move"
+
+
+@when("drop", "#waypoint-list")
+def waypoint_drop(event):
+    """Move the dragged waypoint to its new position."""
+
+    global dragged_index
+
+    event.preventDefault()
+
+    if dragged_index is None:
+        return
+
+    target = event.target.closest(".waypoint-item")
+
+    if is_none(target):
+        dragged_index = None
+        render_waypoints()
+        return
+
+    target_index = int(target.dataset.index)
+
+    rect = target.getBoundingClientRect()
+    midpoint = rect.top + rect.height / 2
+
+    # Determine insertion position.
+    insert_after = event.clientY >= midpoint
+
+    if insert_after:
+        target_index += 1
+
+    colour = waypoints.pop(dragged_index)
+
+    # if dragged_index == target_index:
+    #     dragged_index = None
+    #     return
+
+    # # Remove the dragged waypoint.
+    # colour = waypoints.pop(dragged_index)
+
+    # # Insert it at the new position.
+    # waypoints.insert(target_index, colour)
+
+    # dragged_index = None
+
+    # render_waypoints()
+
+    # Account for removal shifting subsequent indices.
+    if target_index > dragged_index:
+        target_index -= 1
+
+    waypoints.insert(target_index, colour)
+
+    dragged_index = None
+
+    render_waypoints()
+
+
+
+@when("dragend", "#waypoint-list")
+def waypoint_drag_end(event):
+    """Clean up after dragging."""
+
+    global dragged_index
+
+    dragged_index = None
+
+    render_waypoints()
 
 # ==========================================
 # Initialisation
