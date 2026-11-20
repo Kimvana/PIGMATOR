@@ -3,7 +3,7 @@ from pyscript import when, document
 from pyscript.ffi import is_none
 
 from interpolation import interpolate_palette
-
+from vision import to_grayscale
 
 # ==========================================
 # Palette data
@@ -427,18 +427,18 @@ def waypoint_drag_end(event):
 # Palette preview
 # ==========================================
 
-def render_palette_preview():
-    """Render the interpolated palette and waypoint markers."""
+def render_palette_representation(
+    samples,
+    waypoint_colours,
+    gradient_id,
+    markers_id,
+    swatches_id
+):
+    """Render one palette representation."""
 
-    gradient = document.querySelector("#palette-gradient")
-    markers = document.querySelector("#palette-waypoint-markers")
-    swatches = document.querySelector("#palette-waypoint-swatches")
-
-    # Generate the interpolated palette.
-    samples = interpolate_palette(
-        waypoints,
-        method=interpolation_method
-    )
+    gradient = document.querySelector(f"#{gradient_id}")
+    markers = document.querySelector(f"#{markers_id}")
+    swatches = document.querySelector(f"#{swatches_id}")
 
     # Construct CSS gradient stops.
     gradient_stops = [
@@ -456,11 +456,11 @@ def render_palette_preview():
     marker_html = ""
     swatch_html = ""
 
-    for index, colour in enumerate(waypoints):
+    for index, colour in enumerate(waypoint_colours):
 
         position = (
-            index / (len(waypoints) - 1) * 100
-            if len(waypoints) > 1
+            index / (len(waypoint_colours) - 1) * 100
+            if len(waypoint_colours) > 1
             else 0
         )
 
@@ -484,6 +484,58 @@ def render_palette_preview():
 
     markers.innerHTML = marker_html
     swatches.innerHTML = swatch_html
+
+
+def render_palette_preview():
+    """Render normal-vision and grayscale palette representations."""
+
+    # Generate the interpolated palette only once.
+    samples = interpolate_palette(
+        waypoints,
+        method=interpolation_method
+    )
+
+    # Normal-vision representation.
+    render_palette_representation(
+        samples,
+        waypoints,
+        "palette-gradient",
+        "palette-waypoint-markers",
+        "palette-waypoint-swatches"
+    )
+
+    # Grayscale representation.
+    grayscale_samples = [
+        (position, to_grayscale(colour))
+        for position, colour in samples
+    ]
+
+    # Obtain waypoint colours from the transformed samples.
+    # This avoids independently interpolating the waypoints.
+    grayscale_waypoints = []
+
+    for index in range(len(waypoints)):
+
+        position = (
+            index / (len(waypoints) - 1) * 100
+            if len(waypoints) > 1
+            else 0
+        )
+
+        closest_sample = min(
+            grayscale_samples,
+            key=lambda sample: abs(sample[0] - position)
+        )
+
+        grayscale_waypoints.append(closest_sample[1])
+
+    render_palette_representation(
+        grayscale_samples,
+        grayscale_waypoints,
+        "grayscale-gradient",
+        "grayscale-waypoint-markers",
+        "grayscale-waypoint-swatches"
+    )
 
 
 # ==========================================

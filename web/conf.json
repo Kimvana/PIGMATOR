@@ -1,6 +1,8 @@
 {
     "packages": [],
     "files": {
-        "./python/interpolation.py": "./interpolation.py"
+        "./python/conversions.py": "./conversions.py",
+        "./python/interpolation.py": "./interpolation.py",
+        "./python/vision.py": "./vision.py"
     }
 }

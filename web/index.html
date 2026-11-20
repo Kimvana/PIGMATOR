@@ -150,23 +150,29 @@
 
             <div id="palette-representations">
 
+                <div class="palette-column-header">
+
+                    <h2>Palette preview</h2>
+
+                    <select id="interpolation-method"
+                            aria-label="Interpolation method">
+
+                        <option value="srgb" selected>sRGB</option>
+                        <option value="linrgb">linear RGB</option>
+                        <option value="hsv">HSV</option>
+                        <option value="hsl">HSL</option>
+                        <option value="oklab">OKLab</option>
+
+                    </select>
+
+                </div>
+
                 <div class="palette-representation"
                     data-representation="normal">
 
                     <div class="palette-representation-header">
 
-                        <h2>Palette preview</h2>
-
-                        <select id="interpolation-method"
-                                aria-label="Interpolation method">
-
-                            <option value="srgb" selected>sRGB</option>
-                            <option value="linrgb">linear RGB</option>
-                            <option value="hsv">HSV</option>
-                            <option value="hsl">HSL</option>
-                            <option value="oklab">OKLab</option>
-
-                        </select>
+                        <h2>Full colors</h2>
 
                     </div>
 
@@ -184,6 +190,29 @@
                             id="palette-waypoint-swatches">
                         </div>
 
+                    </div>
+
+                </div>
+
+                <div class="palette-representation"
+                    data-representation="grayscale">
+
+                    <div class="palette-representation-header">
+                        <h2>Grayscale</h2>
+                    </div>
+
+                    <div class="palette-bar-container">
+                        <div class="palette-gradient"
+                            id="grayscale-gradient">
+                        </div>
+
+                        <div class="palette-waypoint-markers"
+                            id="grayscale-waypoint-markers">
+                        </div>
+
+                        <div class="palette-waypoint-swatches"
+                            id="grayscale-waypoint-swatches">
+                        </div>
                     </div>
 
                 </div>
