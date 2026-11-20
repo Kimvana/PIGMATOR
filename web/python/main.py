@@ -486,6 +486,29 @@ def render_palette_representation(
     swatches.innerHTML = swatch_html
 
 
+def render_palette_preview_base(model, samples):
+    funcs = {
+        "grayscale": vision.to_grayscale,
+        "protanopia": vision.simulate_protanopia,
+        "deuteranopia": vision.simulate_deuteranopia,
+        "tritanopia": vision.simulate_tritanopia,
+    }
+    samples = [
+        (position, funcs[model](colour))
+        for position, colour in samples
+    ]
+
+    adj_waypoints = [funcs[model](colour) for colour in waypoints]
+
+    render_palette_representation(
+        samples,
+        adj_waypoints,
+        f"{model}-gradient",
+        f"{model}-waypoint-markers",
+        f"{model}-waypoint-swatches",
+    )
+
+
 def render_palette_preview():
     """Render normal-vision and grayscale palette representations."""
 
@@ -505,129 +528,16 @@ def render_palette_preview():
     )
 
     # Grayscale representation.
-    grayscale_samples = [
-        (position, vision.to_grayscale(colour))
-        for position, colour in samples
-    ]
-
-    # Obtain waypoint colours from the transformed samples.
-    # This avoids independently interpolating the waypoints.
-    grayscale_waypoints = []
-
-    for index in range(len(waypoints)):
-
-        position = (
-            index / (len(waypoints) - 1) * 100
-            if len(waypoints) > 1
-            else 0
-        )
-
-        closest_sample = min(
-            grayscale_samples,
-            key=lambda sample: abs(sample[0] - position)
-        )
-
-        grayscale_waypoints.append(closest_sample[1])
-
-    render_palette_representation(
-        grayscale_samples,
-        grayscale_waypoints,
-        "grayscale-gradient",
-        "grayscale-waypoint-markers",
-        "grayscale-waypoint-swatches"
-    )
+    render_palette_preview_base("grayscale", samples)
 
     # Protanopia representation.
-    protanopia_samples = [
-        (position, vision.simulate_protanopia(colour))
-        for position, colour in samples
-    ]
+    render_palette_preview_base("protanopia", samples)
 
-    protanopia_waypoints = []
-
-    for index in range(len(waypoints)):
-
-        position = (
-            index / (len(waypoints) - 1) * 100
-            if len(waypoints) > 1
-            else 0
-        )
-
-        closest_sample = min(
-            protanopia_samples,
-            key=lambda sample: abs(sample[0] - position)
-        )
-
-        protanopia_waypoints.append(closest_sample[1])
-
-    render_palette_representation(
-        protanopia_samples,
-        protanopia_waypoints,
-        "protanopia-gradient",
-        "protanopia-waypoint-markers",
-        "protanopia-waypoint-swatches"
-    )
-
-    deuteranopia_samples = [
-        (position, vision.simulate_deuteranopia(colour))
-        for position, colour in samples
-    ]
-
-    deuteranopia_waypoints = []
-
-    for index in range(len(waypoints)):
-
-        position = (
-            index / (len(waypoints) - 1) * 100
-            if len(waypoints) > 1
-            else 0
-        )
-
-        closest_sample = min(
-            deuteranopia_samples,
-            key=lambda sample: abs(sample[0] - position)
-        )
-
-        deuteranopia_waypoints.append(closest_sample[1])
-
-    render_palette_representation(
-        deuteranopia_samples,
-        deuteranopia_waypoints,
-        "deuteranopia-gradient",
-        "deuteranopia-waypoint-markers",
-        "deuteranopia-waypoint-swatches"
-    )
+    # Deuteranopia representation
+    render_palette_preview_base("deuteranopia", samples)
 
     # Tritanopia representation.
-    tritanopia_samples = [
-        (position, vision.simulate_tritanopia(colour))
-        for position, colour in samples
-    ]
-
-    tritanopia_waypoints = []
-
-    for index in range(len(waypoints)):
-
-        position = (
-            index / (len(waypoints) - 1) * 100
-            if len(waypoints) > 1
-            else 0
-        )
-
-        closest_sample = min(
-            tritanopia_samples,
-            key=lambda sample: abs(sample[0] - position)
-        )
-
-        tritanopia_waypoints.append(closest_sample[1])
-
-    render_palette_representation(
-        tritanopia_samples,
-        tritanopia_waypoints,
-        "tritanopia-gradient",
-        "tritanopia-waypoint-markers",
-        "tritanopia-waypoint-swatches"
-    )
+    render_palette_preview_base("tritanopia", samples)
 
 
 # ==========================================
