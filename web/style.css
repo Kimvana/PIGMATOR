@@ -117,12 +117,6 @@ body {
 }
 
 
-/* .theme-selector button.active {
-    background-color: var(--accent);
-    color: white;
-} */
-
-
 /* Theme icons */
 
 .theme-icon {
@@ -282,6 +276,13 @@ body {
 
     border: 1px solid var(--border);
     border-radius: 8px;
+
+    cursor: grab;
+    transition: opacity 0.15s ease;
+}
+
+.waypoint-item:active {
+    cursor: grabbing;
 }
 
 
@@ -299,8 +300,6 @@ body {
 
     border: 1px solid var(--text);
     border-radius: 5px;
-
-    box-sizing: border-box;
 
     font-size: 12px;
     font-weight: 600;
@@ -528,15 +527,6 @@ body {
 /* ==========================================
    Drag and drop
    ========================================== */
-
-.waypoint-item {
-    cursor: grab;
-    transition: opacity 0.15s ease;
-}
-
-.waypoint-item:active {
-    cursor: grabbing;
-}
 
 .drag-handle {
     display: flex;

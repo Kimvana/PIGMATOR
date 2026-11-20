@@ -242,7 +242,7 @@ def waypoint_input_changed(event):
 
     waypoint_item = target.closest(".waypoint-item")
 
-    if waypoint_item is None:
+    if is_none(waypoint_item):
         return
 
     index = int(waypoint_item.dataset.index)
@@ -340,8 +340,6 @@ def waypoint_drag_over(event):
         item.classList.remove("drag-over-above")
         item.classList.remove("drag-over-below")
 
-    target_index = int(target.dataset.index)
-
     # Determine whether the pointer is in the upper or lower half.
     rect = target.getBoundingClientRect()
 
@@ -389,20 +387,6 @@ def waypoint_drop(event):
 
     colour = waypoints.pop(dragged_index)
 
-    # if dragged_index == target_index:
-    #     dragged_index = None
-    #     return
-
-    # # Remove the dragged waypoint.
-    # colour = waypoints.pop(dragged_index)
-
-    # # Insert it at the new position.
-    # waypoints.insert(target_index, colour)
-
-    # dragged_index = None
-
-    # render_waypoints()
-
     # Account for removal shifting subsequent indices.
     if target_index > dragged_index:
         target_index -= 1
@@ -414,16 +398,21 @@ def waypoint_drop(event):
     render_waypoints()
 
 
-
 @when("dragend", "#waypoint-list")
 def waypoint_drag_end(event):
-    """Clean up after dragging."""
+    """Clean up drag styling."""
 
     global dragged_index
 
     dragged_index = None
 
-    render_waypoints()
+    items = document.querySelectorAll(".waypoint-item")
+
+    for item in items:
+        item.classList.remove("dragging")
+        item.classList.remove("drag-over")
+        item.classList.remove("drag-over-above")
+        item.classList.remove("drag-over-below")
 
 # ==========================================
 # Initialisation
