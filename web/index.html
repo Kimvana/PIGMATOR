@@ -135,69 +135,23 @@
 
             <h2>Colour waypoints</h2>
 
-            <div id="waypoint-list">
+            <button
+                type="button"
+                class="add-waypoint add-waypoint-top"
+                id="add-waypoint-top"
+            >
+                + Add waypoint
+            </button>
 
-                <div class="waypoint-item" data-index="0">
+            <div id="waypoint-list"></div>
 
-                    <span class="waypoint-number">
-                        1
-                    </span>
-                    
-                    <label class="colour-picker-control"
-                        title="Choose waypoint colour">
-
-                        <svg viewBox="0 0 24 24"
-                            class="colour-picker-icon"
-                            aria-hidden="true">
-
-                            <path d="M14.5 6.5L17.5 9.5
-                                    M13 8L5 16
-                                    L4 20
-                                    L8 19
-                                    L16 11"/>
-
-                            <path d="M14.5 6.5L16 5
-                                    C17.5 3.5 19 3.5 20 4.5
-                                    C21 5.5 21 7 19.5 8.5
-                                    L18 10"/>
-
-                            <circle cx="6.5" cy="17.5" r="1"
-                                    fill="currentColor"
-                                    stroke="none"/>
-
-                        </svg>
-
-                        <input
-                            type="color"
-                            id="colour-picker"
-                            value="#3478b8"
-                            aria-label="Waypoint colour"
-                        >
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="hex-input"
-                        value="#3478b8"
-                        maxlength="7"
-                        spellcheck="false"
-                        aria-label="Waypoint hexadecimal colour"
-                    >
-
-                    <button
-                        type="button"
-                        class="delete-waypoint"
-                        disabled
-                        title="At least one waypoint is required"
-                    >
-                        ×
-                    </button>
-
-
-                </div>
-
-            </div>
+            <button
+                type="button"
+                class="add-waypoint add-waypoint-bottom"
+                id="add-waypoint-bottom"
+            >
+                + Add waypoint
+            </button>
 
         </section>
 

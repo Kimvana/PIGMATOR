@@ -265,7 +265,7 @@ body {
 #waypoint-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
 }
 
 
@@ -285,7 +285,7 @@ body {
 }
 
 
-/* Waypoint number */
+/* Waypoint number / colour swatch */
 
 .waypoint-number {
     display: flex;
@@ -296,9 +296,6 @@ body {
     height: 28px;
 
     flex-shrink: 0;
-
-    background-color: #3478b8;
-    color: white;
 
     border: 1px solid var(--text);
     border-radius: 5px;
@@ -363,14 +360,14 @@ body {
     height: 100%;
 
     opacity: 0;
-
     cursor: pointer;
 }
 
+/* ==========================================
+   Hexadecimal input
+   ========================================== */
 
-/* Hexadecimal input */
-
-#hex-input {
+.waypoint-hex-input {
     width: 105px;
     height: 34px;
 
@@ -386,30 +383,25 @@ body {
     font-size: 13px;
 }
 
-
-/* Input focus */
-
-#hex-input:focus {
+.waypoint-hex-input:focus {
     outline: none;
     border-color: var(--accent);
 }
 
-
-/* Invalid hexadecimal input */
-
-#hex-input.invalid {
+.waypoint-hex-input.invalid {
     border-color: #d93025;
     background-color: var(--panel);
     color: var(--text);
 }
 
-
-#hex-input.invalid:focus {
+.waypoint-hex-input.invalid:focus {
     box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.25);
 }
 
 
-/* Delete button */
+/* ==========================================
+   Delete button
+   ========================================== */
 
 .delete-waypoint {
     display: flex;
@@ -420,7 +412,6 @@ body {
     height: 28px;
 
     flex-shrink: 0;
-
     margin-left: auto;
 
     border: none;
@@ -444,6 +435,80 @@ body {
     cursor: not-allowed;
 }
 
+
+/* ==========================================
+   Top and bottom add buttons
+   ========================================== */
+
+.add-waypoint {
+    width: 100%;
+    padding: 10px;
+
+    border: 1px dashed var(--border);
+    border-radius: 7px;
+
+    background-color: transparent;
+    color: var(--muted);
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.add-waypoint:hover {
+    border-color: var(--accent);
+    background-color: var(--input);
+    color: var(--accent);
+}
+
+.add-waypoint-top {
+    margin-bottom: 10px;
+}
+
+.add-waypoint-bottom {
+    margin-top: 10px;
+}
+
+
+/* ==========================================
+   Insertion buttons between waypoints
+   ========================================== */
+
+.waypoint-insertion {
+    display: flex;
+    align-items: center;
+
+    height: 20px;
+    padding-left: 12px;
+}
+
+.insert-waypoint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 19px;
+    height: 19px;
+
+    padding: 0;
+
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    background-color: var(--panel);
+    color: var(--muted);
+
+    font-size: 15px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.insert-waypoint:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
 
 /* =================================
    Colour preview
