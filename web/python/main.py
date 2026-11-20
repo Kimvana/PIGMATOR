@@ -3,7 +3,7 @@ from pyscript import when, document
 from pyscript.ffi import is_none
 
 from interpolation import interpolate_palette
-from vision import to_grayscale
+from vision import to_grayscale, simulate_protanopia
 
 # ==========================================
 # Palette data
@@ -537,6 +537,37 @@ def render_palette_preview():
         "grayscale-waypoint-swatches"
     )
 
+    # Protanopia representation.
+    protanopia_samples = [
+        (position, simulate_protanopia(colour))
+        for position, colour in samples
+    ]
+
+    protanopia_waypoints = []
+
+    for index in range(len(waypoints)):
+
+        position = (
+            index / (len(waypoints) - 1) * 100
+            if len(waypoints) > 1
+            else 0
+        )
+
+        closest_sample = min(
+            protanopia_samples,
+            key=lambda sample: abs(sample[0] - position)
+        )
+
+        protanopia_waypoints.append(closest_sample[1])
+
+    render_palette_representation(
+        protanopia_samples,
+        protanopia_waypoints,
+        "protanopia-gradient",
+        "protanopia-waypoint-markers",
+        "protanopia-waypoint-swatches"
+    )
+
 
 # ==========================================
 # Interpolation method selection
@@ -558,3 +589,18 @@ def interpolation_method_changed(event):
 # ==========================================
 
 render_waypoints()
+test_colours = [
+    "#000000",
+    "#FFFFFF",
+    "#808080",
+    "#FF0000",
+    "#00FF00",
+    "#0000FF",
+    "#E74C3C"
+]
+
+print("Protanopia tests:")
+
+for colour in test_colours:
+    result = simulate_protanopia(colour)
+    print(colour, "->", result)
