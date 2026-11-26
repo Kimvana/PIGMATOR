@@ -442,12 +442,126 @@ def generate_chromaticity_data():
 
         waypoint_xy.append(xy)
 
+    background = generate_chromaticity_background()
+
     return {
         "spectral_x": spectral_x,
         "spectral_y": spectral_y,
         "wavelengths": list(wavelengths),
         "waypoint_x": [point[0] for point in waypoint_xy],
         "waypoint_y": [point[1] for point in waypoint_xy],
+        "background": background,
+    }
+
+
+def generate_chromaticity_background(width=320, height=360):
+    """Generate an RGB image of the CIE 1931 chromaticity diagram."""
+
+    wavelengths, spectral_xy = al.load_spectral_locus()
+
+    # Close the polygon using the line of purples.
+    polygon = list(spectral_xy) + [spectral_xy[0]]
+
+    # Standard XYZ (D65) to linear sRGB matrix.
+    xyz_to_linear_rgb = (
+        (3.2404542, -1.5371385, -0.4985314),
+        (-0.9692660, 1.8760108, 0.0415560),
+        (0.0556434, -0.2040259, 1.0572252),
+    )
+
+    x_min, x_max = 0.0, 0.8
+    y_min, y_max = 0.0, 0.9
+
+    dx = (x_max - x_min) / (width - 1)
+    dy = (y_max - y_min) / (height - 1)
+
+    # Neutral background outside the chromaticity boundary.
+    background = []
+
+    for iy in range(height):
+
+        # Rows are generated from top to bottom.
+        y = y_max - iy * dy
+
+        row = []
+
+        # Find intersections between this scanline and polygon edges.
+        intersections = []
+
+        for i in range(len(polygon) - 1):
+
+            x1, y1 = polygon[i]
+            x2, y2 = polygon[i + 1]
+
+            if (y1 <= y < y2) or (y2 <= y < y1):
+
+                x_intersection = (
+                    x1 + (y - y1) * (x2 - x1) / (y2 - y1)
+                )
+
+                intersections.append(x_intersection)
+
+        intersections.sort()
+
+        # Generate RGB values for each pixel.
+        for ix in range(width):
+
+            x = x_min + ix * dx
+
+            # Check whether this pixel lies inside the polygon.
+            inside = any(
+                intersections[j] <= x <= intersections[j + 1]
+                for j in range(0, len(intersections) - 1, 2)
+            )
+
+            if not inside or y <= 0:
+
+                row.append([245, 245, 245])
+                continue
+
+            # Convert xyY to XYZ, assuming Y = 1.
+            X = x / y
+            Y = 1.0
+            Z = (1.0 - x - y) / y
+
+            xyz = (X, Y, Z)
+
+            # Convert XYZ to linear sRGB.
+            linear_rgb = tuple(
+                sum(
+                    xyz_to_linear_rgb[i][j] * xyz[j]
+                    for j in range(3)
+                )
+                for i in range(3)
+            )
+
+            # Convert linear sRGB to gamma-encoded sRGB.
+            rgb = conv.linear_to_srgb(linear_rgb)
+
+            # Clip to the displayable sRGB gamut.
+            rgb = tuple(
+                max(0.0, min(1.0, channel))
+                for channel in rgb
+            )
+
+            # Convert to 8-bit RGB.
+            pixel = [
+                round(channel * 255)
+                for channel in rgb
+            ]
+
+            row.append(pixel)
+
+        background.append(row)
+
+    return {
+        "rgb": background,
+        "width": width,
+        "height": height,
+        "x0": x_min,
+        "dx": dx,
+        "y0": y_max,
+        "dy": -dy,
     }
 
 
