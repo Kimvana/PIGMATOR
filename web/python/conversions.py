@@ -16,6 +16,21 @@ def hex_to_srgb(colour):
     )
 
 
+def srgb_to_hex(rgb):
+    """Convert encoded sRGB values to a hexadecimal colour."""
+
+    # Clip values to the sRGB display gamut.
+    rgb = tuple(
+        max(0.0, min(1.0, channel))
+        for channel in rgb
+    )
+
+    return "#" + "".join(
+        f"{round(channel * 255):02x}"
+        for channel in rgb
+    )
+
+
 def srgb_to_linear(rgb):
     """Convert gamma-encoded sRGB to linear RGB."""
 
@@ -34,21 +49,6 @@ def linear_to_srgb(rgb):
         12.92 * channel
         if channel <= 0.0031308
         else 1.055 * (channel ** (1 / 2.4)) - 0.055
-        for channel in rgb
-    )
-
-
-def srgb_to_hex(rgb):
-    """Convert encoded sRGB values to a hexadecimal colour."""
-
-    # Clip values to the sRGB display gamut.
-    rgb = tuple(
-        max(0.0, min(1.0, channel))
-        for channel in rgb
-    )
-
-    return "#" + "".join(
-        f"{round(channel * 255):02x}"
         for channel in rgb
     )
 
@@ -178,3 +178,44 @@ def oklab_to_srgb(lab):
     linear_rgb = oklab_to_linear_rgb(lab)
 
     return linear_to_srgb(linear_rgb)
+
+
+# ==========================================
+# XYZ conversion
+# ==========================================
+
+def srgb_to_xyz(rgb):
+    """Convert gamma-encoded sRGB to CIE XYZ (D65).
+
+    XYZ values are normalised so that the reference white has Y = 1.
+    """
+
+    linear_rgb = srgb_to_linear(rgb)
+
+    matrix = (
+        (0.4124564, 0.3575761, 0.1804375),
+        (0.2126729, 0.7151522, 0.0721750),
+        (0.0193339, 0.1191920, 0.9503041),
+    )
+
+    return tuple(
+        sum(row[i] * linear_rgb[i] for i in range(3))
+        for row in matrix
+    )
+
+
+def xyz_to_xy(xyz):
+    """Convert CIE XYZ to CIE 1931 xy chromaticity coordinates."""
+
+    X, Y, Z = xyz
+    total = X + Y + Z
+
+    if total == 0:
+        return None
+
+    x = X / total
+    y = Y / total
+
+    return x, y
+
+
