@@ -1,8 +1,10 @@
 {
     "packages": [],
     "files": {
+        "./python/assetloader.py": "./assetloader.py",
         "./python/conversions.py": "./conversions.py",
         "./python/interpolation.py": "./interpolation.py",
-        "./python/vision.py": "./vision.py"
+        "./python/vision.py": "./vision.py",
+        "./assets/CIE_cc_1931_2deg.csv": "./CIE_cc_1931_2deg.csv"
     }
 }
