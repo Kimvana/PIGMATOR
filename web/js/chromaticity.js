@@ -61,7 +61,7 @@ export function renderChromaticityDiagram(data) {
     const backgroundTrace = {
         type: "image",
         z: background.rgb,
-        colormodel: "rgb",
+        colormodel: "rgba",
 
         x0: background.x0,
         dx: background.dx,

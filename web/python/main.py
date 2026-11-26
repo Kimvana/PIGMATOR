@@ -458,7 +458,7 @@ def generate_chromaticity_data():
 
 
 def generate_chromaticity_background(width=320, height=360):
-    """Generate an RGB image of the CIE 1931 chromaticity diagram."""
+    """Generate an RGBA image of the CIE 1931 chromaticity diagram."""
 
     wavelengths, spectral_xy = al.load_spectral_locus()
 
@@ -519,7 +519,8 @@ def generate_chromaticity_background(width=320, height=360):
 
             if not inside or y <= 0:
 
-                row.append([245, 245, 245])
+                # Fully transparent pixel outside the chromaticity boundary.
+                row.append([0, 0, 0, 0])
                 continue
 
             # Convert xyY to XYZ, assuming Y = 1.
@@ -563,7 +564,7 @@ def generate_chromaticity_background(width=320, height=360):
                 for channel in rgb
             ]
 
-            row.append(pixel)
+            row.append(pixel + [255])
 
         background.append(row)
 
