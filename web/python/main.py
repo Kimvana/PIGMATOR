@@ -2,9 +2,13 @@
 from pyscript import when, document
 from pyscript.ffi import is_none
 
+import json
+import js
+
 from interpolation import interpolate_palette
 import vision
 import conversions as conv
+import assetloader as al
 
 
 # ==========================================
@@ -416,6 +420,48 @@ def waypoint_drag_end(event):
 
 
 # ==========================================
+# Chromaticity diagram
+# ==========================================
+
+def generate_chromaticity_data():
+    """Generate data for the CIE 1931 chromaticity diagram."""
+
+    wavelengths, spectral_xy = al.load_spectral_locus()
+
+    # Convert spectral locus coordinates into separate arrays.
+    spectral_x = [point[0] for point in spectral_xy]
+    spectral_y = [point[1] for point in spectral_xy]
+
+    # Convert waypoint colours to chromaticity coordinates.
+    waypoint_xy = []
+
+    for colour in waypoints:
+        rgb = conv.hex_to_srgb(colour)
+        xyz = conv.srgb_to_xyz(rgb)
+        xy = conv.xyz_to_xy(xyz)
+
+        waypoint_xy.append(xy)
+
+    return {
+        "spectral_x": spectral_x,
+        "spectral_y": spectral_y,
+        "wavelengths": list(wavelengths),
+        "waypoint_x": [point[0] for point in waypoint_xy],
+        "waypoint_y": [point[1] for point in waypoint_xy],
+    }
+
+
+def render_chromaticity_diagram():
+    """Render the CIE 1931 chromaticity diagram."""
+
+    data = generate_chromaticity_data()
+
+    js_data = js.JSON.parse(json.dumps(data))
+
+    js.window.renderChromaticityDiagram(js_data)
+
+
+# ==========================================
 # Palette preview
 # ==========================================
 
@@ -552,3 +598,4 @@ def interpolation_method_changed(event):
 # ==========================================
 
 render_waypoints()
+render_chromaticity_diagram()
