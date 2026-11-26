@@ -19,6 +19,9 @@
 
     <script src="./js/theme.js" defer></script>
 
+    <!-- plotly is used for the middle panel plots -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+
 </head>
 
 <body>
@@ -137,10 +140,10 @@
 
             <h2>Colour space</h2>
 
-            <div class="placeholder">
-                <p>Colour space visualisation</p>
-                <p>Coming later</p>
-            </div>
+            <div
+                id="colour-space-viewer"
+                class="colour-space-viewer"
+            ></div>
 
         </section>
 
