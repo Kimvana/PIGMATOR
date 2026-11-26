@@ -13,6 +13,8 @@ const themeIcons = {
     system: document.querySelector(".icon-system")
 };
 
+const STORAGE_KEY = "pigmator-theme";
+
 
 // Apply the selected theme.
 function applyTheme(preference) {
@@ -36,15 +38,20 @@ function applyTheme(preference) {
 
     // Highlight the selected menu option.
     themeOptions.forEach((option) => {
+
         const isActive = option.dataset.theme === preference;
 
         option.classList.toggle("active", isActive);
         option.setAttribute("aria-checked", isActive);
+
     });
+
+    if (window.updateChromaticityTheme) {
+        window.updateChromaticityTheme();
+    }
 }
 
-
-// Open or close the dropdown.
+// Open or close dropdown.
 function setMenuOpen(isOpen) {
 
     themeMenu.hidden = !isOpen;
@@ -56,7 +63,7 @@ function setMenuOpen(isOpen) {
 }
 
 
-// Toggle dropdown when clicking the main button.
+// Toggle dropdown.
 themeButton.addEventListener("click", () => {
     setMenuOpen(themeMenu.hidden);
 });
@@ -67,7 +74,11 @@ themeOptions.forEach((option) => {
 
     option.addEventListener("click", () => {
 
-        applyTheme(option.dataset.theme);
+        const preference = option.dataset.theme;
+
+        localStorage.setItem(STORAGE_KEY, preference);
+
+        applyTheme(preference);
         setMenuOpen(false);
 
     });
@@ -96,5 +107,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 
-// Start by following the operating system.
-applyTheme("system");
+// Restore the saved preference.
+const savedTheme = localStorage.getItem(STORAGE_KEY);
+
+applyTheme(savedTheme || "system");

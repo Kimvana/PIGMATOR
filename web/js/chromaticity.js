@@ -1,4 +1,59 @@
+
+function getThemeColour(variable) {
+
+    const element = document.createElement("span");
+
+    element.style.color = `var(${variable})`;
+    document.body.appendChild(element);
+
+    const colour = getComputedStyle(element).color;
+
+    element.remove();
+
+    return colour;
+}
+
+
+export function updateChromaticityTheme() {
+
+    const textColour = getThemeColour("--text");
+    const mutedColour = getThemeColour("--muted");
+
+    const graph = document.getElementById("colour-space-viewer");
+
+    if (!graph || !graph._fullLayout) {
+        return;
+    }
+
+    Plotly.relayout(
+        graph,
+        {
+            "font.color": textColour,
+
+            "xaxis.tickfont.color": textColour,
+            "xaxis.linecolor": mutedColour,
+            "xaxis.tickcolor": mutedColour,
+
+            "yaxis.tickfont.color": textColour,
+            "yaxis.linecolor": mutedColour,
+            "yaxis.tickcolor": mutedColour,
+
+            "plot_bgcolor": "rgba(0,0,0,0)",
+            "paper_bgcolor": "rgba(0,0,0,0)"
+        }
+    );
+}
+
+
+window.updateChromaticityTheme = updateChromaticityTheme;
+
+
 export function renderChromaticityDiagram(data) {
+
+    const styles = getComputedStyle(document.documentElement);
+
+    const textColour = getThemeColour("--text");
+    const mutedColour = getThemeColour("--muted");
 
     const background = data.background;
 
@@ -144,7 +199,11 @@ export function renderChromaticityDiagram(data) {
         xaxis: {
             title: "CIE x",
             range: [0, 0.8],
-            zeroline: false
+            zeroline: false,
+            color: textColour,
+            linecolor: mutedColour,
+            tickcolor: mutedColour,
+            gridcolor: "rgba(0,0,0,0)"
         },
 
         yaxis: {
@@ -152,13 +211,23 @@ export function renderChromaticityDiagram(data) {
             range: [0, 0.9],
             zeroline: false,
             scaleanchor: "x",
-            scaleratio: 1
+            scaleratio: 1,
+            color: textColour,
+            linecolor: mutedColour,
+            tickcolor: mutedColour,
+            gridcolor: "rgba(0,0,0,0)"
         },
 
         showlegend: false,
 
-        plot_bgcolor: "white",
-        paper_bgcolor: "white",
+        // Transparent backgrounds.
+        plot_bgcolor: "rgba(0,0,0,0)",
+        paper_bgcolor: "rgba(0,0,0,0)",
+
+        // Text and axis styling.
+        font: {
+            color: textColour
+        },
 
         annotations: [
             {
@@ -230,7 +299,6 @@ export function updateChromaticityWaypoints(data) {
         },
         [4]
     );
-    console.log("Interpolation data:", data.interpolation_x, data.interpolation_y);
 }
 
 window.renderChromaticityDiagram = renderChromaticityDiagram;
