@@ -527,6 +527,7 @@ def generate_chromaticity_background(width=320, height=360):
             xyz = (X, Y, Z)
 
             # Convert XYZ to linear sRGB.
+            # Convert XYZ to linear sRGB.
             linear_rgb = tuple(
                 sum(
                     xyz_to_linear_rgb[i][j] * xyz[j]
@@ -535,14 +536,23 @@ def generate_chromaticity_background(width=320, height=360):
                 for i in range(3)
             )
 
-            # Convert linear sRGB to gamma-encoded sRGB.
-            rgb = conv.linear_to_srgb(linear_rgb)
-
-            # Clip to the displayable sRGB gamut.
-            rgb = tuple(
-                max(0.0, min(1.0, channel))
-                for channel in rgb
+            # Remove negative RGB components.
+            linear_rgb = tuple(
+                max(0.0, channel)
+                for channel in linear_rgb
             )
+
+            # Normalise the largest channel to 1.
+            maximum = max(linear_rgb)
+
+            if maximum > 0:
+                linear_rgb = tuple(
+                    channel / maximum
+                    for channel in linear_rgb
+                )
+
+            # Convert normalised linear RGB to sRGB.
+            rgb = conv.linear_to_srgb(linear_rgb)
 
             # Convert to 8-bit RGB.
             pixel = [
