@@ -38,6 +38,50 @@ export function renderChromaticityDiagram(data) {
             "<extra>Spectral locus</extra>"
     };
 
+    const gamutTrace = {
+        x: [0.6400, 0.3000, 0.1500, 0.6400],
+        y: [0.3300, 0.6000, 0.0600, 0.3300],
+
+        mode: "lines",
+        type: "scatter",
+        name: "sRGB gamut",
+
+        line: {
+            color: "#222222",
+            width: 1,
+            dash: "solid"
+        },
+
+        hovertemplate:
+            "x: %{x:.4f}<br>" +
+            "y: %{y:.4f}<br>" +
+            "<extra>sRGB gamut</extra>"
+    };
+
+    const whitePointTrace = {
+        x: [0.3127],
+        y: [0.3290],
+
+        mode: "markers",
+        type: "scatter",
+        name: "D65 white point",
+
+        marker: {
+            size: 9,
+            color: "white",
+            line: {
+                color: "#222222",
+                width: 1
+            },
+            symbol: "circle"
+        },
+
+        hovertemplate:
+            "x: %{x:.4f}<br>" +
+            "y: %{y:.4f}<br>" +
+            "<extra>D65 white point</extra>"
+    };
+
     const layout = {
 
         margin: {
@@ -64,12 +108,41 @@ export function renderChromaticityDiagram(data) {
         showlegend: false,
 
         plot_bgcolor: "white",
-        paper_bgcolor: "white"
+        paper_bgcolor: "white",
+
+        annotations: [
+            {
+                x: 0.35,
+                y: 0.6000,
+                xref: "x",
+                yref: "y",
+                text: "sRGB",
+                showarrow: false,
+                font: {
+                    size: 11,
+                    color: "#222222"
+                }
+            },
+            {
+                x: 0.3127,
+                y: 0.3290,
+                xref: "x",
+                yref: "y",
+                text: "D65",
+                showarrow: false,
+                xshift: 13,
+                yshift: 10,
+                font: {
+                    size: 11,
+                    color: "#222222"
+                }
+            }
+        ],
     };
 
     Plotly.newPlot(
         "colour-space-viewer",
-        [backgroundTrace, spectralTrace],
+        [backgroundTrace, spectralTrace, gamutTrace, whitePointTrace],
         layout,
         {
             responsive: true
