@@ -82,6 +82,34 @@ export function renderChromaticityDiagram(data) {
             "<extra>D65 white point</extra>"
     };
 
+    const waypointTrace = {
+        x: data.waypoint_x,
+        y: data.waypoint_y,
+
+        mode: "markers",
+        type: "scatter",
+        name: "Waypoints",
+
+        marker: {
+            size: 11,
+            color: data.waypoint_colours,
+            opacity: 1,
+            line: {
+                color: "#222222",
+                width: 1.2
+            },
+            symbol: "circle"
+        },
+
+        customdata: data.waypoint_colours,
+
+        hovertemplate:
+            "x: %{x:.4f}<br>" +
+            "y: %{y:.4f}<br>" +
+            "Colour: %{customdata}<br>" +
+            "<extra>Waypoint</extra>"
+    };
+
     const layout = {
 
         margin: {
@@ -142,7 +170,7 @@ export function renderChromaticityDiagram(data) {
 
     Plotly.newPlot(
         "colour-space-viewer",
-        [backgroundTrace, spectralTrace, gamutTrace, whitePointTrace],
+        [backgroundTrace, spectralTrace, gamutTrace, whitePointTrace, waypointTrace],
         layout,
         {
             responsive: true
@@ -150,4 +178,19 @@ export function renderChromaticityDiagram(data) {
     );
 }
 
+export function updateChromaticityWaypoints(data) {
+
+    Plotly.restyle(
+        "colour-space-viewer",
+        {
+            x: [data.waypoint_x],
+            y: [data.waypoint_y],
+            "marker.color": [data.waypoint_colours],
+            customdata: [data.waypoint_colours]
+        },
+        [4]
+    );
+}
+
 window.renderChromaticityDiagram = renderChromaticityDiagram;
+window.updateChromaticityWaypoints = updateChromaticityWaypoints;

@@ -21,6 +21,8 @@ waypoints = [
 
 interpolation_method = "srgb"
 
+chromaticity_initialized = False
+
 
 # ==========================================
 # Colour calculations
@@ -177,6 +179,9 @@ def render_waypoints():
 
     render_palette_preview()
 
+    # Update the chromaticity diagram.
+    render_chromaticity_diagram()
+
 
 # ==========================================
 # Add waypoints
@@ -236,7 +241,7 @@ def waypoint_button_clicked(event):
 # Waypoint input events
 # ==========================================
 
-@when("input", "#waypoint-list")
+@when("change", "#waypoint-list")
 def waypoint_input_changed(event):
     """Handle colour picker and hexadecimal input changes."""
 
@@ -265,6 +270,9 @@ def waypoint_input_changed(event):
         update_waypoint_swatch(waypoint_item, colour)
         render_palette_preview()
 
+        # Update the chromaticity diagram.
+        render_chromaticity_diagram()
+
     elif target.classList.contains("waypoint-hex-input"):
 
         colour = target.value.strip().lower()
@@ -283,6 +291,9 @@ def waypoint_input_changed(event):
 
             update_waypoint_swatch(waypoint_item, colour)
             render_palette_preview()
+
+            # Update the chromaticity diagram.
+            render_chromaticity_diagram()
 
         else:
             target.classList.add("invalid")
@@ -450,6 +461,7 @@ def generate_chromaticity_data():
         "wavelengths": list(wavelengths),
         "waypoint_x": [point[0] for point in waypoint_xy],
         "waypoint_y": [point[1] for point in waypoint_xy],
+        "waypoint_colours": list(waypoints),
         "background": background,
     }
 
@@ -576,13 +588,48 @@ def generate_chromaticity_background(width=320, height=360):
 
 
 def render_chromaticity_diagram():
-    """Render the CIE 1931 chromaticity diagram."""
+    """Initialise or update the chromaticity diagram."""
 
-    data = generate_chromaticity_data()
+    global chromaticity_initialized
 
-    js_data = js.JSON.parse(json.dumps(data))
+    if not chromaticity_initialized:
 
-    js.window.renderChromaticityDiagram(js_data)
+        # Generate static and dynamic data.
+        data = generate_chromaticity_data()
+
+        js_data = js.JSON.parse(json.dumps(data))
+
+        js.window.renderChromaticityDiagram(js_data)
+
+        chromaticity_initialized = True
+
+    else:
+
+        # Only update waypoint data.
+        data = generate_chromaticity_waypoint_data()
+
+        js_data = js.JSON.parse(json.dumps(data))
+
+        js.window.updateChromaticityWaypoints(js_data)
+
+
+def generate_chromaticity_waypoint_data():
+    """Generate only the dynamic waypoint coordinates."""
+
+    waypoint_xy = []
+
+    for colour in waypoints:
+        rgb = conv.hex_to_srgb(colour)
+        xyz = conv.srgb_to_xyz(rgb)
+        xy = conv.xyz_to_xy(xyz)
+
+        waypoint_xy.append(xy)
+
+    return {
+        "waypoint_x": [point[0] for point in waypoint_xy],
+        "waypoint_y": [point[1] for point in waypoint_xy],
+        "waypoint_colours": list(waypoints),
+    }
 
 
 # ==========================================
