@@ -177,10 +177,7 @@ def render_waypoints():
     if len(waypoints) == 1:
         delete_buttons[0].disabled = True
 
-    render_palette_preview()
-
-    # Update the chromaticity diagram.
-    render_chromaticity_diagram()
+    render_updates()
 
 
 # ==========================================
@@ -268,10 +265,7 @@ def waypoint_input_changed(event):
         hex_input.classList.remove("invalid")
 
         update_waypoint_swatch(waypoint_item, colour)
-        render_palette_preview()
-
-        # Update the chromaticity diagram.
-        render_chromaticity_diagram()
+        render_updates()
 
     elif target.classList.contains("waypoint-hex-input"):
 
@@ -290,10 +284,7 @@ def waypoint_input_changed(event):
             target.classList.remove("invalid")
 
             update_waypoint_swatch(waypoint_item, colour)
-            render_palette_preview()
-
-            # Update the chromaticity diagram.
-            render_chromaticity_diagram()
+            render_updates()
 
         else:
             target.classList.add("invalid")
@@ -587,15 +578,23 @@ def generate_chromaticity_background(width=320, height=360):
     }
 
 
-def render_chromaticity_diagram():
+def render_chromaticity_diagram(samples=None):
     """Initialise or update the chromaticity diagram."""
 
     global chromaticity_initialized
 
+    if samples is None:
+        samples = interpolate_palette(
+            waypoints,
+            method=interpolation_method
+        )
+
     if not chromaticity_initialized:
 
-        # Generate static and dynamic data.
         data = generate_chromaticity_data()
+
+        dynamic_data = generate_chromaticity_waypoint_data(samples)
+        data.update(dynamic_data)
 
         js_data = js.JSON.parse(json.dumps(data))
 
@@ -605,16 +604,15 @@ def render_chromaticity_diagram():
 
     else:
 
-        # Only update waypoint data.
-        data = generate_chromaticity_waypoint_data()
+        data = generate_chromaticity_waypoint_data(samples)
 
         js_data = js.JSON.parse(json.dumps(data))
 
         js.window.updateChromaticityWaypoints(js_data)
 
 
-def generate_chromaticity_waypoint_data():
-    """Generate only the dynamic waypoint coordinates."""
+def generate_chromaticity_waypoint_data(samples=None):
+    """Generate dynamic waypoint and interpolation coordinates."""
 
     waypoint_xy = []
 
@@ -625,11 +623,35 @@ def generate_chromaticity_waypoint_data():
 
         waypoint_xy.append(xy)
 
-    return {
+    data = {
         "waypoint_x": [point[0] for point in waypoint_xy],
         "waypoint_y": [point[1] for point in waypoint_xy],
         "waypoint_colours": list(waypoints),
     }
+
+    # Convert interpolated samples to chromaticity coordinates.
+    if samples is not None:
+
+        interpolation_xy = []
+
+        for position, colour in samples:
+            rgb = conv.hex_to_srgb(colour)
+            xyz = conv.srgb_to_xyz(rgb)
+            xy = conv.xyz_to_xy(xyz)
+
+            interpolation_xy.append(xy)
+
+        data["interpolation_x"] = [
+            point[0] if point is not None else None
+            for point in interpolation_xy
+        ]
+
+        data["interpolation_y"] = [
+            point[1] if point is not None else None
+            for point in interpolation_xy
+        ]
+
+    return data
 
 
 # ==========================================
@@ -748,6 +770,8 @@ def render_palette_preview():
     # Tritanopia representation.
     render_palette_preview_base("tritanopia", samples)
 
+    return
+
 
 # ==========================================
 # Interpolation method selection
@@ -761,7 +785,16 @@ def interpolation_method_changed(event):
 
     interpolation_method = event.target.value
 
-    render_palette_preview()
+    render_updates()
+
+
+# ==========================================
+# Renderer updates
+# ==========================================
+
+def render_updates():
+    samples = render_palette_preview()
+    render_chromaticity_diagram(samples)
 
 
 # ==========================================

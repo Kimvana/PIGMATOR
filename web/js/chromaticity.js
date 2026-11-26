@@ -82,6 +82,28 @@ export function renderChromaticityDiagram(data) {
             "<extra>D65 white point</extra>"
     };
 
+    const interpolationTrace = {
+        x: data.interpolation_x,
+        y: data.interpolation_y,
+
+        mode: "lines",
+        type: "scatter",
+        name: "Interpolation path",
+
+        connectgaps: false,
+
+        line: {
+            color: "#222222",
+            width: 1.5,
+            dash: "dash"
+        },
+
+        hovertemplate:
+            "x: %{x:.4f}<br>" +
+            "y: %{y:.4f}<br>" +
+            "<extra>Interpolation path</extra>"
+    };
+
     const waypointTrace = {
         x: data.waypoint_x,
         y: data.waypoint_y,
@@ -170,7 +192,14 @@ export function renderChromaticityDiagram(data) {
 
     Plotly.newPlot(
         "colour-space-viewer",
-        [backgroundTrace, spectralTrace, gamutTrace, whitePointTrace, waypointTrace],
+        [
+            backgroundTrace,
+            spectralTrace,
+            gamutTrace,
+            whitePointTrace,
+            interpolationTrace,
+            waypointTrace
+        ],
         layout,
         {
             responsive: true
@@ -180,6 +209,7 @@ export function renderChromaticityDiagram(data) {
 
 export function updateChromaticityWaypoints(data) {
 
+    // Update waypoint markers.
     Plotly.restyle(
         "colour-space-viewer",
         {
@@ -188,8 +218,19 @@ export function updateChromaticityWaypoints(data) {
             "marker.color": [data.waypoint_colours],
             customdata: [data.waypoint_colours]
         },
+        [5]
+    );
+
+    // Update interpolation path.
+    Plotly.restyle(
+        "colour-space-viewer",
+        {
+            x: [data.interpolation_x],
+            y: [data.interpolation_y]
+        },
         [4]
     );
+    console.log("Interpolation data:", data.interpolation_x, data.interpolation_y);
 }
 
 window.renderChromaticityDiagram = renderChromaticityDiagram;
